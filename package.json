@@ -1,0 +1,27 @@
+{
+  "name": "slack-imagemacro",
+  "version": "0.0.1",
+  "description": "Slack Bot that shows image macros",
+  "author": "Alex Doronin",
+  "license": "MIT",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "1.14.2",
+    "express": "4.13.3",
+    "optimist": "0.6.1",
+    "request": "2.67.0"
+  },
+  "scripts": {
+    "import": "bin/import ./imagemacros.json",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "slack",
+    "imagemacro",
+    "phabricator"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doronin/slack-imagemacro"
+  }
+}

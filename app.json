@@ -1,0 +1,11 @@
+{
+  "name": "slack-imagemacro",
+  "description": "Slack Bot that shows image macros",
+  "repository": "https://github.com/doronin/slack-imagemacro",
+  "logo": "http://i.imgur.com/XTQxWAc.png",
+  "keywords": [
+    "slack",
+    "imagemacro",
+    "phabricator"
+  ]
+}

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+OUTPUT=${1:-imagemacros.json}
+echo '{}' | arc call-conduit macro.query | sed 's/\\\//\//g' | jq '.response | del(.[] .phid) | del(.[] .authorPHID)' > $OUTPUT
