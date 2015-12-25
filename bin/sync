@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Download all images from Phabricator, save them to s3 and import imagemacros JSON object
+#
+
+function usage {
+  echo "Usage: bin/export | $0 -b <s3-bucket> -p <key-prefix> [-i <path-to-imagemacros-json>]"
+  exit 1
+}
+
+TMP=tmp
+CD=pwd
+IMAGEMACROS=imagemacros.json
+
+while getopts ":b:i:p:" opt; do
+  case $opt in
+    b)
+      BUCKET=$OPTARG
+      ;;
+    i)
+      IMAGEMACROS=$OPTARG
+      ;;
+    p)
+      PREFIX=$OPTARG
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
+[ $BUCKET ] && [ $PREFIX ] || usage
+
+mkdir -p $TMP
+cd $TMP
+
+pairs=$(cat /dev/stdin | tee "./$IMAGEMACROS" | jq -r 'to_entries | map([.key, .value] | join(",")) | .[]')
+
+for pair in $pairs; do
+  name=$(echo $pair | cut -d, -f1)
+  url=$(echo $pair | cut -d, -f2)
+  filename=$(wget "$url" 2>&1 | grep 'Saving to' | cut -d\' -f2)
+
+  newurl=https://s3.amazonaws.com/$BUCKET/$PREFIX/$filename
+  url_escaped=$(echo $url | sed -e 's/[\/&]/\\&/g')
+  newurl_escaped=$(echo $newurl | sed -e 's/[\/&]/\\&/g')
+
+  echo "$url -> $newurl"
+  LANG=C LANG_ALL=C sed -i.bak "s/$url_escaped/$newurl_escaped/" ./$IMAGEMACROS
+done
+
+rm -f ./$IMAGEMACROS.bak
+
+aws s3 sync . s3://$BUCKET/$PREFIX --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
+
+cd $CD
+rm -rf $TMP

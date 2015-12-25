@@ -12,7 +12,8 @@
     "request": "2.67.0"
   },
   "scripts": {
-    "import": "bin/import ./imagemacros.json",
+    "export": "bin/export > ./imagemacros.json",
+    "sync": "bin/export | bin/sync -b <s3-bucket> -p <key-prefix>",
     "start": "node server.js"
   },
   "keywords": [

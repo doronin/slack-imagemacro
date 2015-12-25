@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Export image macros as JSON object
+#
+
+echo '{}' | arc call-conduit macro.query | sed 's/\\\//\//g' | jq '.response | to_entries | map({key:.key, value:.value.uri}) | from_entries'

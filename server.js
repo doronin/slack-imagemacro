@@ -50,7 +50,7 @@ app.get('/health', function(req, res) {
 
 app.post('/macro', function(req, res) {
   var key,
-      macro;
+      uri;
 
   if (req.body.token !== options.token) {
     return res.status(401).send({
@@ -60,9 +60,9 @@ app.post('/macro', function(req, res) {
   }
 
   key = req.body.text;
-  macro = macros[key];
+  uri = macros[key];
 
-  if (!macro) {
+  if (!uri) {
     return res.status(404).send({
       success: false,
       error: 'Image macro not found'
@@ -73,8 +73,8 @@ app.post('/macro', function(req, res) {
     response_type: 'in_channel',
     text: '',
     attachments: [{
-      fallback: key,
-      image_url: macro.uri
+      fallback: key + ': ' + uri,
+      image_url: uri
     }]
   });
 });
